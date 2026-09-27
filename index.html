@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Password Strength Checker</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #0b1020;
+            color: white;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 450px;
+            padding: 30px;
+            background: #151c32;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #aab3cc;
+            margin-bottom: 25px;
+        }
+
+        .input-box {
+            display: flex;
+            gap: 8px;
+        }
+
+        input {
+            flex: 1;
+            padding: 14px;
+            border: 1px solid #39425f;
+            border-radius: 10px;
+            background: #0d1325;
+            color: white;
+            font-size: 16px;
+            outline: none;
+        }
+
+        button {
+            padding: 10px 14px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            background: #26304d;
+            color: white;
+        }
+
+        .strength {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .bar {
+            height: 10px;
+            background: #303952;
+            border-radius: 10px;
+            margin: 12px 0 25px;
+            overflow: hidden;
+        }
+
+        #strengthBar {
+            height: 100%;
+            width: 0%;
+            transition: 0.3s;
+        }
+
+        .checks {
+            margin-top: 10px;
+        }
+
+        .check {
+            padding: 8px 0;
+            color: #aab3cc;
+        }
+
+        .valid {
+            color: #5cff9d;
+        }
+
+        .invalid {
+            color: #ff7070;
+        }
+
+        .tip {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 10px;
+            background: #0d1325;
+            color: #aab3cc;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🔐 Password Strength Checker</h1>
+
+    <p class="subtitle">
+        Check how strong your password is
+    </p>
+
+    <div class="input-box">
+
+        <input
+            type="password"
+            id="password"
+            placeholder="Enter your password"
+        >
+
+        <button onclick="togglePassword()">Show</button>
+
+    </div>
+
+    <div class="strength" id="result">
+        Enter a password
+    </div>
+
+    <div class="bar">
+        <div id="strengthBar"></div>
+    </div>
+
+    <div class="checks">
+
+        <div class="check" id="length">
+            ❌ At least 8 characters
+        </div>
+
+        <div class="check" id="uppercase">
+            ❌ Uppercase letter
+        </div>
+
+        <div class="check" id="lowercase">
+            ❌ Lowercase letter
+        </div>
+
+        <div class="check" id="number">
+            ❌ Number
+        </div>
+
+        <div class="check" id="special">
+            ❌ Special character
+        </div>
+
+    </div>
+
+    <div class="tip">
+        💡 Tip: Use a long password with a mix of letters,
+        numbers and symbols. Never use a real password while testing this demo.
+    </div>
+
+</div>
+
+<script>
+
+const password = document.getElementById("password");
+
+password.addEventListener("input", checkPassword);
+
+function checkPassword() {
+
+    let value = password.value;
+    let score = 0;
+
+    let hasLength = value.length >= 8;
+    let hasUppercase = /[A-Z]/.test(value);
+    let hasLowercase = /[a-z]/.test(value);
+    let hasNumber = /[0-9]/.test(value);
+    let hasSpecial = /[^A-Za-z0-9]/.test(value);
+
+    updateCheck("length", hasLength);
+    updateCheck("uppercase", hasUppercase);
+    updateCheck("lowercase", hasLowercase);
+    updateCheck("number", hasNumber);
+    updateCheck("special", hasSpecial);
+
+    if (hasLength) score++;
+    if (hasUppercase) score++;
+    if (hasLowercase) score++;
+    if (hasNumber) score++;
+    if (hasSpecial) score++;
+
+    let result = document.getElementById("result");
+    let bar = document.getElementById("strengthBar");
+
+    if (value.length === 0) {
+
+        result.textContent = "Enter a password";
+        bar.style.width = "0%";
+
+    } else if (score <= 2) {
+
+        result.textContent = "🔴 Weak Password";
+        bar.style.width = "30%";
+
+    } else if (score <= 4) {
+
+        result.textContent = "🟡 Medium Password";
+        bar.style.width = "65%";
+
+    } else {
+
+        result.textContent = "🟢 Strong Password";
+        bar.style.width = "100%";
+
+    }
+}
+
+function updateCheck(id, condition) {
+
+    let element = document.getElementById(id);
+
+    if (condition) {
+
+        element.classList.add("valid");
+        element.classList.remove("invalid");
+        element.textContent = "✅ " + element.textContent.substring(2);
+
+    } else {
+
+        element.classList.add("invalid");
+        element.classList.remove("valid");
+        element.textContent = "❌ " + element.textContent.substring(2);
+
+    }
+}
+
+function togglePassword() {
+
+    let input = document.getElementById("password");
+    let button = event.target;
+
+    if (input.type === "password") {
+
+        input.type = "text";
+        button.textContent = "Hide";
+
+    } else {
+
+        input.type = "password";
+        button.textContent = "Show";
+
+    }
+}
+
+</script>
+
+</body>
+</html>
